@@ -201,8 +201,8 @@ with st.sidebar:
     st.markdown('<div class="warn">⚠️ O JARVIS classifica combinações por heurísticas estatísticas. Não existe garantia de previsão ou aumento das probabilidades matemáticas do sorteio.</div>',unsafe_allow_html=True)
 
 # ========================= HERO =========================
-contest=last.get("numero","—") if last else "—"
-date=last.get("dataApuracao","—") if last else "—"
+contest=last.get("concurso","—") if last else "—"
+date=last.get("data","—") if last else "—"
 st.markdown(f'''<div class="hero"><div class="eyebrow">JARVIS · MEGA-SENA INTELLIGENCE</div><div class="title">MISSION CONTROL</div><div class="sub">Um laboratório experimental para análise estatística, otimização combinatória, diversidade de carteiras e validação fora da amostra.</div><div class="pill"><span class="dot"></span>{'SISTEMA ONLINE' if online else 'MODO OFFLINE'}</div></div>''',unsafe_allow_html=True)
 
 if not online:
