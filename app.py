@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 st.set_page_config(page_title="JARVIS 3.0 • Mega-Sena Intelligence", page_icon="🤖", layout="wide", initial_sidebar_state="expanded")
 
-API = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
+API = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/megasena"
 TIMEOUT = 8
 HISTORY_LIMIT = 180
 MAX_WORKERS = 12
@@ -53,7 +53,7 @@ def load_history(limit=HISTORY_LIMIT):
     rows=[]
     def fetch(n):
         try:
-            d=api_get(f"{API}/{n}")
+            d=api_get(f"{API}/{n}.json")
             nums=d.get("listaDezenas") or d.get("dezenasSorteadasOrdemSorteio")
             if not nums: return None
             return {"concurso":int(d.get("numero",n)),"data":d.get("dataApuracao",""),"nums":sorted(map(int,nums))}
