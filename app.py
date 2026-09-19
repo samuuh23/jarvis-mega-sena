@@ -35,12 +35,12 @@ section[data-testid="stSidebar"]{background:linear-gradient(180deg,#060b14,#0911
 '''
 st.markdown(CSS, unsafe_allow_html=True)
 
-
 def api_get(url=API):
+    if url == API:
+        url = f"{API}/_ultimo.json"
     r = requests.get(url, timeout=TIMEOUT, headers={"User-Agent":"JARVIS-Mega/3.0"})
     r.raise_for_status()
     return r.json()
-
 @st.cache_data(ttl=600, show_spinner=False)
 def latest_draw():
     return api_get()
