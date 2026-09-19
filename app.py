@@ -10,9 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 st.set_page_config(page_title="JARVIS 3.0 • Mega-Sena Intelligence", page_icon="🤖", layout="wide", initial_sidebar_state="expanded")
 
-API = "https://raw.githubusercontent.com/maickon/free-apiloterias/refs/heads/master/database/megasena"
-TIMEOUT = 8
-HISTORY_LIMIT = 180
+API = "https://valorfinal.com.br/data/megasena-historico.json"
+TIMEOUT = 10
+HISTORY_LIMIT = 10000
 MAX_WORKERS = 12
 
 # ========================= JARVIS 3.0 =========================
@@ -35,34 +35,48 @@ section[data-testid="stSidebar"]{background:linear-gradient(180deg,#060b14,#0911
 '''
 st.markdown(CSS, unsafe_allow_html=True)
 
-def api_get(url=API):
-    if url == API:
-        url = f"{API}/_ultimo.json"
-    r = requests.get(url, timeout=TIMEOUT, headers={"User-Agent":"JARVIS-Mega/3.0"})
-    r.raise_for_status()
-    return r.json()
 @st.cache_data(ttl=600, show_spinner=False)
-def latest_draw():
-    return api_get()
+def api_get(url=API):
+    r = requests.get(
+        url,
+        timeout=TIMEOUT,
+        headers={"User-Agent": "JARVIS-Mega/4.0"}
+    )
+    r.raise_for_status()
+    payload = r.json()
 
-@st.cache_data(ttl=1800, show_spinner=False)
-def load_history(limit=HISTORY_LIMIT):
-    data = api_get(f"{API}/_todos.json")
+    concursos = payload.get("concursos", []) if isinstance(payload, dict) else payload
     rows = []
 
-    for d in data:
-        nums = d.get("listaDezenas") or d.get("dezenasSorteadasOrdemSorteio")
+    for item in concursos:
+        if not isinstance(item, list) or len(item) < 3:
+            continue
+
+        numero, data, nums = item[0], item[1], item[2]
+
         if not nums:
             continue
 
         rows.append({
-            "concurso": int(d.get("numero", 0)),
-            "data": d.get("dataApuracao", ""),
+            "concurso": int(numero),
+            "data": str(data),
             "nums": sorted(map(int, nums))
         })
 
     rows.sort(key=lambda x: x["concurso"], reverse=True)
     return rows
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def latest_draw():
+    data = api_get()
+    return data[0] if data else {}
+
+
+@st.cache_data(ttl=1800, show_spinner=False)
+def load_history(limit=HISTORY_LIMIT):
+    data = api_get()
+    return data[:limit]
 
 
 def df_history(hist):
