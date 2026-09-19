@@ -1,13 +1,15 @@
-# JARVIS — Mega-Sena AI
+# JARVIS Mega-Sena AI — Visual Edition
 
-Aplicativo experimental em Streamlit para análise estatística e otimização combinatória de jogos da Mega-Sena.
+Interface visual premium para o laboratório estatístico do JARVIS.
 
-## Execução
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
+Recursos:
+- Interface responsiva para celular e desktop
+- CSS com animações e efeitos visuais
+- Geração de jogos com múltiplas estratégias
+- Frequência, recência, pares e características estruturais
+- Exportação CSV
+- Backtest walk-forward
+- Histórico dos últimos 300 concursos
+- Carregamento paralelo da API da CAIXA
 
-O aplicativo consulta a API pública da CAIXA e carrega apenas os últimos 300 concursos para evitar uma inicialização lenta.
-
-**Importante:** os scores são heurísticos e não representam probabilidades reais de sorteio.
+Importante: o sistema é experimental. Não existe garantia de previsão em sorteios aleatórios.
