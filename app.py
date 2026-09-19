@@ -12,7 +12,7 @@ st.set_page_config(page_title="JARVIS 3.0 • Mega-Sena Intelligence", page_icon
 
 API = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
 TIMEOUT = 8
-HISTORY_LIMIT = 300
+HISTORY_LIMIT = 180
 MAX_WORKERS = 12
 
 # ========================= JARVIS 3.0 =========================
@@ -152,10 +152,23 @@ if "tickets" not in st.session_state: st.session_state.tickets=[]
 if "mission_count" not in st.session_state: st.session_state.mission_count=0
 if "favorites" not in st.session_state: st.session_state.favorites=[]
 if "activity" not in st.session_state: st.session_state.activity=[]
+if "refresh_requested" not in st.session_state: st.session_state.refresh_requested=False
 
+refreshing = st.session_state.pop("refresh_requested", False)
 try:
-    last=latest_draw()
-    hist=load_history()
+    if refreshing:
+        # Refresh only the data caches; keep the user's mission/favorites/session intact.
+        latest_draw.clear()
+        load_history.clear()
+        with st.status("🔄 Atualizando inteligência...", expanded=True) as refresh_status:
+            st.write("Consultando o último concurso da CAIXA...")
+            last=latest_draw()
+            st.write("Atualizando o histórico estatístico...")
+            hist=load_history()
+            refresh_status.update(label="✅ Inteligência atualizada", state="complete", expanded=False)
+    else:
+        last=latest_draw()
+        hist=load_history()
     online=True
 except Exception as e:
     online=False; last={}; hist=[]; load_error=str(e)
@@ -172,7 +185,8 @@ with st.sidebar:
     mode=st.selectbox("Estratégia",["balanced","recent","frequency","contrarian"],format_func=lambda x:{"balanced":"Balanceada","recent":"Recência","frequency":"Frequência","contrarian":"Contrarian"}[x])
     seed=st.number_input("Seed",0,999999,42)
     if st.button("↻ Atualizar inteligência",use_container_width=True):
-        st.cache_data.clear(); st.rerun()
+        st.session_state.refresh_requested=True
+        st.rerun()
     st.markdown('<div class="warn">⚠️ O JARVIS classifica combinações por heurísticas estatísticas. Não existe garantia de previsão ou aumento das probabilidades matemáticas do sorteio.</div>',unsafe_allow_html=True)
 
 # ========================= HERO =========================
