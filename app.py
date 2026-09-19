@@ -164,7 +164,7 @@ except Exception as e:
 with st.sidebar:
     st.markdown('<div class="sidebar-title">🤖 JARVIS 3.0</div>',unsafe_allow_html=True)
     st.caption("Mega-Sena Intelligence Lab")
-    st.markdown('<div class="side-plan"><span class="smallcaps">plano atual</span><br><b>DEMO / LAB</b><br><span class="mini">Acesso experimental</span></div>',unsafe_allow_html=True)
+    st.markdown('<div class="side-plan"><span class="smallcaps">plano atual</span><br><b>JARVIS PRO</b><br><span class="mini">Acesso ativo</span></div>',unsafe_allow_html=True)
     page=st.radio("Navegação",["⚡ Dashboard","🎯 Gerador","🧠 Radar","🧪 Backtest","🗂️ Histórico"],label_visibility="collapsed")
     st.divider()
     qty=st.slider("Jogos por missão",1,20,8)
