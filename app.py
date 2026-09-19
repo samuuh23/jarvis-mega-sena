@@ -47,24 +47,21 @@ def latest_draw():
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_history(limit=HISTORY_LIMIT):
-    latest = latest_draw()
-    last = int(latest.get("numero", 0))
-    ids = list(range(last, max(0, last-limit), -1))
-    rows=[]
-    def fetch(n):
-        try:
-            d=api_get(f"{API}/{n}.json")
-            nums=d.get("listaDezenas") or d.get("dezenasSorteadasOrdemSorteio")
-            if not nums: return None
-            return {"concurso":int(d.get("numero",n)),"data":d.get("dataApuracao",""),"nums":sorted(map(int,nums))}
-        except Exception:
-            return None
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-        futs=[ex.submit(fetch,n) for n in ids]
-        for f in as_completed(futs):
-            x=f.result()
-            if x: rows.append(x)
-    rows.sort(key=lambda x:x["concurso"], reverse=True)
+    data = api_get(f"{API}/_todos.json")
+    rows = []
+
+    for d in data:
+        nums = d.get("listaDezenas") or d.get("dezenasSorteadasOrdemSorteio")
+        if not nums:
+            continue
+
+        rows.append({
+            "concurso": int(d.get("numero", 0)),
+            "data": d.get("dataApuracao", ""),
+            "nums": sorted(map(int, nums))
+        })
+
+    rows.sort(key=lambda x: x["concurso"], reverse=True)
     return rows
 
 
